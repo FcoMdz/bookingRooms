@@ -1,0 +1,31 @@
+<p-table [value]="reservas" [paginator]="true" [rows]="10">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>ID</th>
+        <th>Sala</th>
+        <th>Usuario</th>
+        <th>Hora Inicio</th>
+        <th>Hora Fin</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-reserva>
+      <tr>
+        <td>{{ reserva.id }}</td>
+        <td>{{ reserva.sala_id }}</td>
+        <td>{{ reserva.usuario_id }}</td>
+        <td>{{ reserva.hora_inicio | date: 'medium' }}</td>
+        <td>{{ reserva.hora_fin | date: 'medium' }}</td>
+        <td>{{ reserva.estado }}</td>
+        <td>
+          <button pButton type="button" icon="pi pi-pencil" class="p-button-warning"></button>
+          <button pButton type="button" icon="pi pi-trash" class="p-button-danger"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  
+  <p-dialog header="Nueva Reserva" [(visible)]="displayDialog">
+    <!-- Form for creating a reservation -->
+  </p-dialog>
