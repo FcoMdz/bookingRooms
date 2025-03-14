@@ -1,31 +1,124 @@
+<p-button (click)="showDialog()">Realizar Reservación</p-button>
+<hr>
 <p-table [value]="reservas" [paginator]="true" [rows]="10">
-    <ng-template pTemplate="header">
-      <tr>
-        <th>ID</th>
-        <th>Sala</th>
-        <th>Usuario</th>
-        <th>Hora Inicio</th>
-        <th>Hora Fin</th>
-        <th>Estado</th>
-        <th>Acciones</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-reserva>
-      <tr>
-        <td>{{ reserva.id }}</td>
-        <td>{{ reserva.sala_id }}</td>
-        <td>{{ reserva.usuario_id }}</td>
-        <td>{{ reserva.hora_inicio | date: 'medium' }}</td>
-        <td>{{ reserva.hora_fin | date: 'medium' }}</td>
-        <td>{{ reserva.estado }}</td>
-        <td>
-          <button pButton type="button" icon="pi pi-pencil" class="p-button-warning"></button>
-          <button pButton type="button" icon="pi pi-trash" class="p-button-danger"></button>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
-  
-  <p-dialog header="Nueva Reserva" [(visible)]="displayDialog">
-    <!-- Form for creating a reservation -->
-  </p-dialog>
+  <ng-template pTemplate="header">
+    <tr>
+      <th>ID</th>
+      <th>Sala ID</th>
+      <th>Usuario ID</th>
+      <th>Hora Inicio</th>
+      <th>Hora Fin</th>
+      <th>Estado</th>
+      <th>Acciones</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-reserva>
+    <tr>
+      <td>{{ reserva.id }}</td>
+      <td>{{ getSalaName(reserva.sala_id) }}</td>
+      <td>{{ getUsuarioName(reserva.usuario_id) }}</td>
+      <td>{{ reserva.hora_inicio | date: 'medium' }}</td>
+      <td>{{ reserva.hora_fin | date: 'medium' }}</td>
+      <td>{{ reserva.estado }}</td>
+      <td>
+        <button
+            pButton
+            type="button"
+            icon="pi pi-unlock"
+            class="p-button-success"
+            (click)="liberarReserva(reserva.id)"
+        >Liberar</button>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<p-dialog
+  header="{{ selectedReserva ? 'Editar Reserva' : 'Agregar Reserva' }}"
+  [(visible)]="displayDialog"
+  [style]="{ width: '500px' }"
+  [modal]="true"
+>
+  <form [formGroup]="reservaForm" (ngSubmit)="onSubmit()">
+    <div class="p-fluid form-container">
+        <div class="p-field">
+            <label for="sala_id">Sala</label>
+            <p-dropdown
+              id="sala_id"
+              formControlName="sala_id"
+              [options]="salas"
+              optionLabel="nombre"
+              optionValue="id"
+              placeholder="Seleccione una sala"
+            ></p-dropdown>
+            <small *ngIf="reservaForm.get('sala_id')?.invalid && reservaForm.get('sala_id')?.touched" class="p-error">
+              Sala es requerida.
+            </small>
+          </div>
+      
+          <div class="p-field">
+            <label for="usuario_id">Usuario</label>
+            <p-dropdown
+              id="usuario_id"
+              formControlName="usuario_id"
+              [options]="users"
+              optionLabel="nombre"
+              optionValue="id"
+              placeholder="Seleccione un usuario"
+            ></p-dropdown>
+            <small *ngIf="reservaForm.get('usuario_id')?.invalid && reservaForm.get('usuario_id')?.touched" class="p-error">
+              Usuario es requerido.
+            </small>
+          </div>
+      
+          <div class="p-field">
+            <label for="hora_inicio">Hora Inicio</label>
+            <p-calendar
+              id="hora_inicio"
+              formControlName="hora_inicio"
+              [showTime]="true"
+              hourFormat="24"
+              placeholder="Seleccione la hora de inicio"
+            ></p-calendar>
+            <small *ngIf="reservaForm.get('hora_inicio')?.invalid && reservaForm.get('hora_inicio')?.touched" class="p-error">
+              Hora de inicio es requerida.
+            </small>
+          </div>
+      
+          <div class="p-field">
+            <label for="hora_fin">Hora Fin</label>
+            <p-calendar
+              id="hora_fin"
+              formControlName="hora_fin"
+              [showTime]="true"
+              hourFormat="24"
+              placeholder="Seleccione la hora de fin"
+            ></p-calendar>
+            <small *ngIf="reservaForm.get('hora_fin')?.invalid && reservaForm.get('hora_fin')?.touched" class="p-error">
+              Hora de fin es requerida.
+            </small>
+          </div>
+      
+          <div class="p-field">
+            <label for="estado">Estado</label>
+            <p-dropdown
+              id="estado"
+              formControlName="estado"
+              [options]="estados"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Seleccione el estado"
+            ></p-dropdown>
+            <small *ngIf="reservaForm.get('estado')?.invalid && reservaForm.get('estado')?.touched" class="p-error">
+              Estado es requerido.
+            </small>
+          </div>
+      
+          <div class="p-dialog-footer">
+            <button pButton type="submit" label="Guardar" class="p-button-primary" [disabled]="reservaForm.invalid"></button>
+            <button pButton type="button" label="Cancelar" class="p-button-secondary" (click)="hideDialog()"></button>
+          </div>
+    </div>
+    
+  </form>
+</p-dialog>

@@ -16,7 +16,12 @@ export class UserRepository implements IUserRepository {
   async create(user: User): Promise<number> {
     const [result] = await pool.query(
       'INSERT INTO usuarios (nombre, email, password, rol) VALUES (?, ?, ?, ?)',
-      [user.nombre, user.email, user.password, user.rol]
+      [
+        user.nombre,
+        user.email,
+        user.password, // Already a Buffer
+        user.rol
+      ]
     );
     return (result as any).insertId;
   }
@@ -29,5 +34,19 @@ export class UserRepository implements IUserRepository {
   async delete(id: number): Promise<boolean> {
     const [result] = await pool.query('DELETE FROM usuarios WHERE id = ?', [id]);
     return (result as any).affectedRows > 0;
+  }
+  async getByEmail(email: string): Promise<User | null> {
+    const [rows] = await pool.query('SELECT * FROM usuarios WHERE email = ?', [email]);
+    const userData = (rows as any[])[0];
+    if (!userData) return null;
+  
+    // Map the database row to a User instance
+    return new User(
+      userData.id,
+      userData.nombre,
+      userData.email,
+      Buffer.from(userData.password), // Convert password to Buffer
+      userData.rol
+    );
   }
 }

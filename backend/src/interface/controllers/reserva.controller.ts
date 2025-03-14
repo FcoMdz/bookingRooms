@@ -7,21 +7,40 @@ const reservaService = new ReservaService(new ReservaRepository());
 
 export const createReserva = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { sala_id, usuario_id, hora_inicio, hora_fin } = req.body;
-    if (!sala_id || !usuario_id || !hora_inicio || !hora_fin) {
-      res.status(400).json({ error: 'Todos los campos son obligatorios' });
+    const { sala_id, hora_inicio, hora_fin } = req.body;
+
+    // Convert hora_inicio and hora_fin to Date objects
+    const horaInicioDate = new Date(hora_inicio);
+    const horaFinDate = new Date(hora_fin);
+
+    // Validate that hora_inicio and hora_fin are valid dates
+    if (isNaN(horaInicioDate.getTime()) || isNaN(horaFinDate.getTime())) {
+      res.status(400).json({ error: 'hora_inicio y hora_fin deben ser fechas válidas' });
       return;
     }
 
-    const reservaId = await reservaService.create(
-      new Reserva(null, sala_id, usuario_id, new Date(hora_inicio), new Date(hora_fin))
-    );
+    // Check reservation duration
+    const duration = Math.abs(horaFinDate.getTime() - horaInicioDate.getTime()) / (1000 * 60 * 60); // Duration in hours
+    if (duration > 2) {
+      res.status(400).json({ error: 'La reserva no puede exceder 2 horas' });
+      return;
+    }
+
+    // Check sala availability
+    const isAvailable = await reservaService.checkAvailability(sala_id, horaInicioDate, horaFinDate);
+    if (!isAvailable) {
+      res.status(400).json({ error: 'La sala no está disponible en este horario' });
+      return;
+    }
+
+    // Create the reservation
+    const reserva = new Reserva(null, sala_id, req.body.usuario_id, horaInicioDate, horaFinDate, 'reservada');
+    const reservaId = await reservaService.create(reserva);
     res.status(201).json({ message: 'Reserva creada', reservaId });
   } catch (error: any) {
     res.status(500).json({ error: 'Error al crear la reserva', details: error.message });
   }
 };
-
 export const liberarReserva = async (req: Request, res: Response): Promise<void> => {
   try {
     const reservaId = Number(req.params.id);

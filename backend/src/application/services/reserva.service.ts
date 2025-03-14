@@ -62,5 +62,10 @@ export class ReservaService {
     );
     return (result as any).affectedRows > 0;
   }
-  
+  async liberarReservasExpiradas(now: Date): Promise<void> {
+    await pool.query(
+      "UPDATE reservas SET estado = 'liberada' WHERE hora_fin <= ? AND estado = 'reservada'",
+      [now]
+    );
+  }
 }

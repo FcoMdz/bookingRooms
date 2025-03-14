@@ -4,7 +4,7 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
 
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
@@ -15,6 +15,9 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
+import { authInterceptor } from './interceptors/auth.interceptor';
+import { ReservaServiceService } from './services/reserva-service.service';
+import { SalasServiceService } from './services/salas-service.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -23,8 +26,14 @@ export const appConfig: ApplicationConfig = {
     MessageService,
     providePrimeNG({
       theme: {
-          preset: Aura
+          preset: Aura,
+          options:{
+            darkmodeSelector: '.my'
+          }
       }
-  })
+  }),
+  provideHttpClient(withInterceptors([authInterceptor])),
+  ReservaServiceService,
+  SalasServiceService
   ]
 };

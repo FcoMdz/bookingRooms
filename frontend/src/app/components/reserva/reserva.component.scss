@@ -1,0 +1,38 @@
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; // Espacio entre campos
+    min-height: 100vh; /* Esto permite que el formulario se expanda si es necesario */
+    overflow-y: auto;
+  }
+  
+  .p-field {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  label {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .required {
+    color: red;
+  }
+  
+  small.p-error {
+    margin-top: 5px;
+  }
+  .p-dialog-footer{
+    margin-top: 2rem;
+  }
+
+  ::ng-deep .p-calendar {
+    width: 100% !important;
+    box-sizing: border-box;
+  }
+  
+  ::ng-deep .p-calendar input {
+    width: 100% !important;
+  }
+  

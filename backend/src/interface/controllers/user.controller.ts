@@ -36,13 +36,13 @@ export const getUserById = async (req: Request, res: Response): Promise<void> =>
 
 export const createUser = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { nombre, email, password } = req.body;
-    if (!nombre || !email || !password) {
+    const { nombre, email, password, rol } = req.body;
+    if (!nombre || !email || !password || !rol) {
       res.status(400).json({ error: 'Todos los campos son obligatorios' });
       return;
     }
 
-    const userId = await userService.createUser(new User(null, nombre, email, password));
+    const userId = await userService.createUser(new User(null, nombre, email, password, rol));
     res.status(201).json({ message: 'Usuario creado', userId });
   } catch (error: any) {
     res.status(500).json({ error: 'Error al crear el usuario', details: error.message });
@@ -93,4 +93,5 @@ export const deleteUser = async (req: Request, res: Response): Promise<void> => 
   } catch (error: any) {
     res.status(500).json({ error: 'Error al eliminar el usuario', details: error.message });
   }
+  
 };

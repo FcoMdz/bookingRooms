@@ -1,0 +1,65 @@
+<div class="sign-up-container">
+    <p-card header="Crear Cuenta">
+      <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
+        <div class="p-field">
+          <label for="name">Nombre</label>
+          <input
+            id="name"
+            type="text"
+            pInputText
+            formControlName="nombre"
+            placeholder="Ingrese su nombre"
+          />
+          <small *ngIf="nombre?.invalid && nombre?.touched" class="p-error">
+            <span *ngIf="nombre?.errors?.['required']">El nombre es obligatorio.</span>
+          </small>
+        </div>
+  
+        <div class="p-field">
+          <label for="email">Correo Electrónico</label>
+          <input
+            id="email"
+            type="email"
+            pInputText
+            formControlName="email"
+            placeholder="Ingrese su correo"
+          />
+          <small *ngIf="email?.invalid && email?.touched" class="p-error">
+            <span *ngIf="email?.errors?.['required']">El correo es obligatorio.</span>
+            <span *ngIf="email?.errors?.['email']">Ingrese un correo válido.</span>
+          </small>
+        </div>
+  
+        <div class="p-field">
+          <label for="password">Contraseña</label>
+          <input
+            id="password"
+            type="password"
+            pInputText
+            formControlName="password"
+            placeholder="Ingrese su contraseña"
+          />
+          <small *ngIf="password?.invalid && password?.touched" class="p-error">
+            <span *ngIf="password?.errors?.['required']">La contraseña es obligatoria.</span>
+            <span *ngIf="password?.errors?.['minlength']">Mínimo 6 caracteres.</span>
+          </small>
+        </div>
+  
+        <button
+          pButton
+          type="submit"
+          label="Registrarse"
+          class="p-button-primary"
+          [disabled]="signUpForm.invalid"
+        >
+          Crear Cuenta
+        </button>
+  
+        <!-- 📌 Enlace al login -->
+        <p class="login-link">
+          ¿Ya tienes una cuenta? <a routerLink="/login">Inicia sesión aquí</a>
+        </p>
+      </form>
+    </p-card>
+  </div>
+  
